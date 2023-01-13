@@ -9,7 +9,7 @@ contract MoveSystemTest is MudTest {
   function testExecute() public {
     uint256 entity = 1;
     Coord memory coord = Coord(12, 34);
-    MoveSystem(system(MoveSystemID)).executeTyped(entity, coord);
+    MoveSystem(system(MoveSystemID)).executeTyped(MoveSystem.Direction.Up);
     PositionComponent positionComponent = PositionComponent(component(PositionComponentID));
     Coord memory position = positionComponent.getValue(entity);
     assertEq(position.x, coord.x);

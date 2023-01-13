@@ -6,20 +6,25 @@ export function createInputSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
     scenes: {
-      Main: {
-        input,
-        maps: {
-          Main: { tileWidth, tileHeight },
-        },
-      },
+      Main: { input },
     },
   } = phaser;
 
-  const clickSub = input.click$.subscribe((p) => {
-    const pointer = p as Phaser.Input.Pointer;
-    const tilePos = pixelCoordToTileCoord({ x: pointer.worldX, y: pointer.worldY }, tileWidth, tileHeight);
-    network.api.move(tilePos);
+  const keySub = input.keyboard$.subscribe((p) => {
+    if (p.isUp) {
+      if (p.originalEvent.key === "w") {
+        network.api.move(1);
+      } else if (p.originalEvent.key === "s") {
+        network.api.move(0);
+      } else if (p.originalEvent.key === "a") {
+        network.api.move(2);
+      } else if (p.originalEvent.key === "d") {
+        network.api.move(3);
+      } else if (p.originalEvent.key === "c") {
+        network.api.create();
+      }
+    }
   });
 
-  world.registerDisposer(() => clickSub?.unsubscribe());
+  world.registerDisposer(() => keySub?.unsubscribe());
 }

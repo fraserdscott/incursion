@@ -1,7 +1,8 @@
 {
-  "components": ["PositionComponent"],
+  "components": ["ColorComponent", "PositionComponent"],
   "systems": [
     { "name": "ComponentDevSystem", "writeAccess": ["*"] },
+    { "name": "CreateSystem", "writeAccess": ["ColorComponent", "PositionComponent"] },
     { "name": "MoveSystem", "writeAccess": ["PositionComponent"] }
   ]
 }

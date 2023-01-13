@@ -1,5 +1,5 @@
 import { tileCoordToPixelCoord } from "@latticexyz/phaserx";
-import { defineComponentSystem } from "@latticexyz/recs";
+import { defineComponentSystem, getComponentValue, getComponentValueStrict } from "@latticexyz/recs";
 import { NetworkLayer } from "../../network";
 import { Sprites } from "../constants";
 import { PhaserLayer } from "../types";
@@ -7,7 +7,7 @@ import { PhaserLayer } from "../types";
 export function createPositionSystem(network: NetworkLayer, phaser: PhaserLayer) {
   const {
     world,
-    components: { Position },
+    components: { Color, Position },
   } = network;
 
   const {
@@ -28,14 +28,35 @@ export function createPositionSystem(network: NetworkLayer, phaser: PhaserLayer)
 
     const object = objectPool.get(update.entity, "Sprite");
     const { x, y } = tileCoordToPixelCoord(position, tileWidth, tileHeight);
-    const sprite = config.sprites[Sprites.Donkey];
 
-    object.setComponent({
-      id: Position.id,
-      once: (gameObject) => {
-        gameObject.setTexture(sprite.assetKey, sprite.frame);
-        gameObject.setPosition(x, y);
-      },
-    });
+    const color = getComponentValue(Color, update.entity);
+
+    if (color) {
+      const sprite = config.sprites[Sprites.Gold];
+
+      object.setComponent({
+        id: Position.id,
+        once: (gameObject) => {
+          gameObject.setTexture(sprite.assetKey, sprite.frame);
+          gameObject.setPosition(x, y);
+
+          if (color) {
+            gameObject.setTint(((color.value + 1) * 16777216) / (8 + 1));
+          }
+        },
+      });
+    } else {
+      {
+        const sprite = config.sprites[Sprites.Donkey];
+
+        object.setComponent({
+          id: Position.id,
+          once: (gameObject) => {
+            gameObject.setTexture(sprite.assetKey, sprite.frame);
+            gameObject.setPosition(x, y);
+          },
+        });
+      }
+    }
   });
 }
